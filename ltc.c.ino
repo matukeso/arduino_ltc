@@ -1,11 +1,18 @@
-//#include <SoftwareSerial.h>
-//SoftwareSerial toRasp(8,9);
-#define toRasp Serial1
+
 #include "ltc.h"
 
+#define LEONARD 
 
+#ifdef LEONARD
+//SoftwareSerial toRasp(8,9);
+#define toRasp Serial1
 const static byte inLTC = 3;
 const static byte TCEnableLED = 5;
+#else
+#include <SoftwareSerial.h>
+
+#endif
+
 
 LTCFrame gFrame;
 //LTCFrame gInFrame;
@@ -17,6 +24,7 @@ volatile bool gbOutFrameCountUp;
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(TCEnableLED, OUTPUT);
 
   ltc_frame_reset(&gFrame);
   //  ltc_frame_reset(&gInFrame);
@@ -25,7 +33,6 @@ void setup() {
   gbOutBipBit = false;
   
 
-  pinMode(TCEnableLED, OUTPUT);
   Serial.begin(115200);
   toRasp.begin(9600);
 
@@ -34,6 +41,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(inLTC), OnInterruptReader, CHANGE );
   
   digitalWrite(TCEnableLED, LOW);   // turn the LED on (HIGH is the voltage level)
+  digitalWrite(LED_BUILTIN, LOW);   // turn the LED on (HIGH is the voltage level)
 }
 
 
@@ -155,8 +163,10 @@ void loop() {
   }
 
   if ( bInSync ) {
-      digitalWrite(TCEnableLED, HIGH);   // turn the LED on (HIGH is the voltage level)
+     digitalWrite(TCEnableLED, HIGH);   // turn the LED on (HIGH is the voltage level)
+    digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
   }else{
-     digitalWrite(TCEnableLED, LOW);   // turn the LED on (HIGH is the voltage level)
+    digitalWrite(TCEnableLED, LOW);   // turn the LED on (HIGH is the voltage level)
+    digitalWrite(LED_BUILTIN, LOW);   // turn the LED on (HIGH is the voltage level)
   }
 }
